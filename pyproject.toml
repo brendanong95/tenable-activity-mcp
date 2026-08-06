@@ -1,0 +1,32 @@
+[project]
+name = "tenable-activity-mcp"
+version = "0.1.0"
+description = "MCP server exposing the Tenable Vulnerability Management audit/activity log as tools"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+dependencies = [
+    "mcp==2.0.0",
+    "pytenable==26.6.1",
+    "python-dotenv==1.2.2",
+    "requests==2.33.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+]
+
+[project.scripts]
+tenable-activity-mcp = "src.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

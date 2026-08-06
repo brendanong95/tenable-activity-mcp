@@ -1,0 +1,9 @@
+# Runtime dependencies (mirrors [project.dependencies] in pyproject.toml).
+# Prefer `uv sync`; this file exists for plain `pip install -r requirements.txt`.
+mcp==2.0.0
+pytenable==26.6.1
+python-dotenv==1.2.2
+requests==2.33.0
+
+# Development / tests only:
+#   pip install pytest==9.1.1
