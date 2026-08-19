@@ -78,7 +78,8 @@ uv run python -m src.server
 
 ## Connecting a client
 
-Use the **absolute path** to your clone in the config below.
+Use the **absolute path** to your clone in the config below. To print it, run `pwd`
+from the repository root on macOS/Linux, or `(Get-Location).Path` in PowerShell.
 
 ### Claude Desktop
 
