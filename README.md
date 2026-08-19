@@ -1,5 +1,7 @@
 # tenable-activity-mcp
 
+[![Tests](https://github.com/brendanong95/tenable-activity-mcp/actions/workflows/tests.yml/badge.svg)](https://github.com/brendanong95/tenable-activity-mcp/actions/workflows/tests.yml)
+
 An MCP server that exposes the **Tenable Vulnerability Management audit/activity log**
 (`GET /audit-log/v1/events`) as a small set of tools, so any MCP client can ask about
 platform activity, API-key usage, and anomalous behaviour on demand.
