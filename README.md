@@ -236,6 +236,43 @@ uv run python -c "from src.state import StateStore; print(StateStore().stats())"
 
 Delete `state.db` to reset baselines; the next `detect_anomalies` call rebuilds them.
 
+## Known limitations
+
+- **Requires the Administrator role.** Reading `audit-log/v1/events` needs the
+  Administrator role, or a custom role with explicit audit-log read permission, on the
+  user that owns the API keys. Anything less returns HTTP 403. Run
+  `check_permission_prereqs` first - it reports exactly this, with remediation text.
+
+- **Anomaly detection needs history before it is useful.** The first `detect_anomalies`
+  call against a fresh `state.db` builds baselines from the 30 days preceding your
+  window and then compares against them. Actors with little or no prior activity flag
+  as `new_actor`, so early runs are noisier than later ones.
+
+- **Role resolution is best effort.** `get_actor_profile` tries to resolve an actor's
+  Tenable role from the user directory. If the keys cannot list users, the profile is
+  still returned - just without the role label.
+
+- **Off-hours detection uses a fixed UTC band.** The off-hours window is 20:00-06:00
+  UTC and does not adjust to the tenant's working timezone. Distributed teams will see
+  off-hours findings that are simply another region's working morning.
+
+- **Baselines are local to the machine running the server.** `state.db` is not shared
+  between installs, so two operators running their own copies build independent
+  baselines and can reach different conclusions about the same window.
+
+- **Wide windows return partial results by design.** One tool call follows at most 20
+  pages / 100,000 events. Hitting that cap is reported explicitly along with the
+  `next_token` needed to resume, so it is never a silent truncation - but a very large
+  window does take several calls.
+
+- **Only the first 1,000 events come back inline.** `list_activity_events` caps the
+  inline `events` array at 1,000 and sets `inline_truncated` when it does. The
+  `summary` block still covers every event fetched, so the aggregate numbers stay
+  correct even when the inline list is trimmed.
+
+- **`get_actor_profile` looks back 365 days at most**, and cannot see further back than
+  the audit log itself retains.
+
 ## Notes
 
 - Built against `mcp==2.0.0`, where the SDK renamed `FastMCP` to `MCPServer`. `server.py`
