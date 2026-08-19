@@ -1,0 +1,33 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.11 is the floor declared in pyproject.toml; 3.13 is current.
+        python-version: ["3.11", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: astral-sh/setup-uv@v10.0.1
+        with:
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - run: uv sync --extra dev
+
+      - name: Unit tests
+        run: uv run pytest -q
+
+      # Runs all six tools against a scripted fake Tenable and asserts the
+      # results. No credentials, no network - exits non-zero on any failure.
+      - name: Offline end-to-end smoke test
+        run: uv run python scripts/smoke_local.py
